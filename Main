@@ -60,6 +60,18 @@ spawn(function()
 						end
 						
 						if _G.AutoSkill and game:GetService("Players").LocalPlayer.Character.ActiveItems:FindFirstChild("Rage Scroll") == nil  then
+							if game:GetService("Players").LocalPlayer.PlayerData.Inventory:FindFirstChild("Rage Scroll") == nil then
+								repeat
+									wait()
+									game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Chests["Rage Scroll"].Giver.CFrame
+									local TouchInterest = game:GetService("Workspace").Chests["Rage Scroll"].Giver.TouchInterest
+									firetouchinterest(TouchInterest,game.Players.LocalPlayer.Character.Head, 1)
+									
+								until game:GetService("Players").LocalPlayer.PlayerData.Inventory:FindFirstChild("Rage Scroll")
+		
+								wait(0.15)
+							end
+							
 							repeat
 								wait()
 								game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Arsenals["Punky Sky"].Base.CFrame * CFrame.new(0,0,0)
