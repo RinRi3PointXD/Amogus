@@ -202,7 +202,7 @@ pcall(function()
 					["embeds"] = {
 						{
 							["title"] = "Rebirth Successfully",
-							["description"] = game.Players.LocalPlayer.Name.."was rebirth!!",
+							["description"] = DateTime.now():FormatLocalTime("LT", "en-us"),
 							["type"] = "rich",
 							["color"] = tonumber(0x7269da),
 						}
