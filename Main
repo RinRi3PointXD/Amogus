@@ -1,0 +1,188 @@
+_G.AutoFarm = false
+_G.AutoRebirth = false
+_G.AutoSkill = false
+_G.Enemy = nil
+
+local DiscordLib = loadstring(game:HttpGet"https://raw.githubusercontent.com/dawid-scripts/UI-Libs/main/discord%20lib.txt")()
+
+local win = DiscordLib:Window("Amgus")
+local serv = win:Server("Main","")
+local btns = serv:Channel("Auto Farm")
+
+function God()
+	if game.Players.LocalPlayer.Character:FindFirstChild("Stats") then
+		if game.Players.LocalPlayer.Character:FindFirstChild("Stats"):FindFirstChild("DefenseBuff") then
+			game.Players.LocalPlayer.Character:FindFirstChild("Stats"):FindFirstChild("DefenseBuff"):Destroy()
+		end
+	end
+end
+
+local drop = btns:Dropdown("Select Enemies",{}, function(bool)
+	local Enemy	 = workspace["Enemies"]:FindFirstChild(bool)
+	if Enemy then
+		_G.Enemy = Enemy.Name
+	end
+end)
+
+for i,v in pairs(workspace["Enemies"]:GetChildren()) do
+	if v:FindFirstChild("Tier") then
+		drop:Add(v.Name--[[.." Tier "..v["Tier"].Value]])
+	end
+end
+
+local Auto_Farm = btns:Toggle("Auto-Farm",false, function(bool)
+	God()
+
+	_G.AutoFarm = bool
+end)
+
+btns:Toggle("Auto-Rebirth",false, function(bool)
+
+	_G.AutoRebirth = bool
+
+	if bool == true and _G.AutoFarm == false then
+		DiscordLib:Notification("Notification", "เปิด AutoFarm ด้วย", "Okay!")
+	end
+end)
+
+btns:Toggle("Auto-Skill",false, function(bool)
+
+	_G.AutoSkill = bool
+
+	if bool == true and _G.AutoFarm == false then
+		DiscordLib:Notification("Notification", "เปิด AutoFarm ด้วย", "Okay!")
+	end
+end)
+
+spawn(function()
+	while wait() do
+		if _G.AutoFarm and _G.Enemy then
+			pcall(function()
+				for i,v in pairs(workspace["Enemies"][_G.Enemy]:GetChildren()) do
+					if v:IsA("Model") and game.Players.LocalPlayer.Character.Humanoid.Health > 0 then
+						if not _G.AutoFarm or _G.Enemy ~= v.Parent.Name then
+							break
+						end
+						
+						if _G.AutoSkill and game:GetService("Players").LocalPlayer.Character.ActiveItems:FindFirstChild("Rage Scroll") == nil  then
+							repeat
+								wait()
+								game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Arsenals["Punky Sky"].Base.CFrame * CFrame.new(0,0,0)
+								local args = {
+									[1] = "Rage Scroll"
+								}
+
+								game:GetService("ReplicatedStorage").Remotes.ItemSetup:FireServer(unpack(args))
+							until game:GetService("Players").LocalPlayer.Character.ActiveItems:FindFirstChild("Rage Scroll")
+
+							wait(0.15)
+						end
+						
+						repeat
+							game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = false
+							wait(0.15)
+							game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v["EnemyLocation"].CFrame * CFrame.new(0,0,0)
+							v.CombatTrigger:FireServer("Solo")
+						until v:FindFirstChildWhichIsA("Model")
+
+						wait(0.15)
+
+						repeat
+							wait()
+							game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = true
+							
+							if _G.AutoSkill and game:GetService("Players").LocalPlayer.Character.ActiveItems:FindFirstChild("Rage Scroll") then
+								local args = {
+									[1] = game:GetService("Players").LocalPlayer.Character.ActiveItems:FindFirstChild("Rage Scroll")
+								}
+
+								game:GetService("Players").LocalPlayer.Character.ItemActivate:FireServer(unpack(args))
+							end
+							
+							if game:GetService("Workspace"):FindFirstChild("CombatFolder") then
+								if game:GetService("Workspace").CombatFolder:FindFirstChild(game.Players.LocalPlayer.Name) then
+									for i,orb in pairs(game:GetService("Workspace").CombatFolder:FindFirstChild(game.Players.LocalPlayer.Name):GetChildren()) do
+										if string.match(orb.Name, "Orb") then
+											sethiddenproperty(game.Players.LocalPlayer, "SimulationRadius", math.huge)
+											game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = orb:FindFirstChildWhichIsA("BasePart").CFrame
+
+											if v:FindFirstChildWhichIsA("Model") then
+												game.ReplicatedStorage.Remotes.Damage:FireServer(v:FindFirstChildWhichIsA("Model"),orb)
+											end	
+										end
+									end
+								end
+							end
+						until v:FindFirstChildWhichIsA("Model") == nil
+						
+						game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = false
+						
+						wait(0.15)
+						
+						if _G.AutoRebirth and game:GetService("Players").LocalPlayer.leaderstats.Level.Value >= 150 then
+							if game:GetService("Players").LocalPlayer.PlayerData.Inventory:FindFirstChild("Eternal Flame") then
+								repeat
+									wait()
+									game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Arsenals["Punky Sky"].Base.CFrame * CFrame.new(0,0,0)
+									
+									if #game:GetService("Players").LocalPlayer.Character.ActiveItems:GetChildren() == 3 then
+										local args = {
+											[1] = "ClearActiveItems"
+										}
+
+										game:GetService("ReplicatedStorage").Remotes.ItemSetup:FireServer(unpack(args))
+									end
+									
+									local args = {
+										[1] = "Eternal Flame"
+									}
+
+									game:GetService("ReplicatedStorage").Remotes.ItemSetup:FireServer(unpack(args))
+
+								until game:GetService("Players").LocalPlayer.Character.ActiveItems:FindFirstChild("Eternal Flame")
+								
+								repeat
+									wait()
+									local args = {
+										[1] = game:GetService("Players").LocalPlayer.Character.ActiveItems:FindFirstChild("Eternal Flame")
+									}
+
+									game:GetService("Players").LocalPlayer.Character.ItemActivate:FireServer(unpack(args))
+									
+								until game:GetService("Players").LocalPlayer.leaderstats.Level.Value ~= 150
+								
+								_G.Enemy = "Void Boss"
+							else
+								_G.Enemy = "Void Boss"
+							end
+						end
+
+						game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = false
+					end
+				end
+			end)
+		end
+	end
+end)
+
+game:GetService("Players").LocalPlayer.Idled:connect(function()
+	game:GetService("VirtualUser"):Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+	wait(1)
+	game:GetService("VirtualUser"):Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+end)
+
+pcall(function()
+	game.Players.LocalPlayer.ChildAdded:Connect(function()
+		God()
+	end)
+end)
+
+pcall(function()
+	game.Players.LocalPlayer.PlayerData.Stats.LevelUpPoints.Changed:Connect(function()
+		local args = {
+			[1] = "Damage"
+		}
+
+		game:GetService("ReplicatedStorage").Remotes.StatsChange:FireServer(unpack(args))
+	end)
+end)
