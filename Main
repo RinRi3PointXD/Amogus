@@ -58,7 +58,7 @@ spawn(function()
 						if not _G.AutoFarm or _G.Enemy ~= v.Parent.Name then
 							break
 						end
-						
+
 						if _G.AutoSkill and game:GetService("Players").LocalPlayer.Character.ActiveItems:FindFirstChild("Rage Scroll") == nil  then
 							if game:GetService("Players").LocalPlayer.PlayerData.Inventory:FindFirstChild("Rage Scroll") == nil then
 								repeat
@@ -66,12 +66,12 @@ spawn(function()
 									game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Chests["Rage Scroll"].Giver.CFrame
 									local TouchInterest = game:GetService("Workspace").Chests["Rage Scroll"].Giver.TouchInterest
 									firetouchinterest(TouchInterest,game.Players.LocalPlayer.Character.Head, 1)
-									
+
 								until game:GetService("Players").LocalPlayer.PlayerData.Inventory:FindFirstChild("Rage Scroll")
-		
+
 								wait(0.15)
 							end
-							
+
 							repeat
 								wait()
 								game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Arsenals["Punky Sky"].Base.CFrame * CFrame.new(0,0,0)
@@ -84,7 +84,7 @@ spawn(function()
 
 							wait(0.15)
 						end
-						
+
 						repeat
 							game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = false
 							wait(0.15)
@@ -97,7 +97,7 @@ spawn(function()
 						repeat
 							wait()
 							game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = true
-							
+
 							if _G.AutoSkill and game:GetService("Players").LocalPlayer.Character.ActiveItems:FindFirstChild("Rage Scroll") then
 								local args = {
 									[1] = game:GetService("Players").LocalPlayer.Character.ActiveItems:FindFirstChild("Rage Scroll")
@@ -105,7 +105,7 @@ spawn(function()
 
 								game:GetService("Players").LocalPlayer.Character.ItemActivate:FireServer(unpack(args))
 							end
-							
+
 							if game:GetService("Workspace"):FindFirstChild("CombatFolder") then
 								if game:GetService("Workspace").CombatFolder:FindFirstChild(game.Players.LocalPlayer.Name) then
 									for i,orb in pairs(game:GetService("Workspace").CombatFolder:FindFirstChild(game.Players.LocalPlayer.Name):GetChildren()) do
@@ -121,17 +121,17 @@ spawn(function()
 								end
 							end
 						until v:FindFirstChildWhichIsA("Model") == nil
-						
+
 						game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = false
-						
+
 						wait(0.15)
-						
+
 						if _G.AutoRebirth and game:GetService("Players").LocalPlayer.leaderstats.Level.Value >= 150 then
 							if game:GetService("Players").LocalPlayer.PlayerData.Inventory:FindFirstChild("Eternal Flame") then
 								repeat
 									wait()
 									game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Arsenals["Punky Sky"].Base.CFrame * CFrame.new(0,0,0)
-									
+
 									if #game:GetService("Players").LocalPlayer.Character.ActiveItems:GetChildren() == 3 then
 										local args = {
 											[1] = "ClearActiveItems"
@@ -139,7 +139,7 @@ spawn(function()
 
 										game:GetService("ReplicatedStorage").Remotes.ItemSetup:FireServer(unpack(args))
 									end
-									
+
 									local args = {
 										[1] = "Eternal Flame"
 									}
@@ -147,7 +147,7 @@ spawn(function()
 									game:GetService("ReplicatedStorage").Remotes.ItemSetup:FireServer(unpack(args))
 
 								until game:GetService("Players").LocalPlayer.Character.ActiveItems:FindFirstChild("Eternal Flame")
-								
+
 								repeat
 									wait()
 									local args = {
@@ -155,9 +155,9 @@ spawn(function()
 									}
 
 									game:GetService("Players").LocalPlayer.Character.ItemActivate:FireServer(unpack(args))
-									
+
 								until game:GetService("Players").LocalPlayer.leaderstats.Level.Value ~= 150
-								
+
 								_G.Enemy = "Void Boss"
 							else
 								_G.Enemy = "Void Boss"
@@ -191,5 +191,32 @@ pcall(function()
 		}
 
 		game:GetService("ReplicatedStorage").Remotes.StatsChange:FireServer(unpack(args))
+	end)
+end)
+
+pcall(function()
+	game:GetService("Players").LocalPlayer.leaderstats.Level.Changed:Connect(function(value)
+		if value == 1 then
+			if _G.Url ~= "" then
+				local data = {
+					["embeds"] = {
+						{
+							["title"] = "Rebirth Successfully",
+							["description"] = game.Players.LocalPlayer.Name.."was rebirth!!",
+							["type"] = "rich",
+							["color"] = tonumber(0x7269da),
+						}
+					}
+				}
+				local newdata = game:GetService("HttpService"):JSONEncode(data)
+
+				local headers = {
+					["content-type"] = "application/json"
+				}
+				request = http_request or request or HttpPost or syn.request
+				local abcdef = {Url = _G.Url, Body = newdata, Method = "POST", Headers = headers}
+				request(abcdef)
+			end
+		end
 	end)
 end)
