@@ -1,3 +1,9 @@
+_G.AutoFarm = false
+_G.AutoRebirth = false
+_G.AutoSkill = false
+_G.Url = ""
+_G.Enemy = ""
+
 local DiscordLib = loadstring(game:HttpGet"https://raw.githubusercontent.com/dawid-scripts/UI-Libs/main/discord%20lib.txt")()
 
 local win = DiscordLib:Window("Amgus")
@@ -218,6 +224,6 @@ game:GetService("ReplicatedStorage").Remotes.ItemSetup.OnClientEvent:Connect(fun
 				local abcdef = {Url = _G.Url, Body = newdata, Method = "POST", Headers = headers}
 				request(abcdef)
 			end
-		end
-	end)
+		end)
+	end
 end)
