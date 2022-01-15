@@ -1,9 +1,3 @@
-_G.AutoFarm = false
-_G.AutoRebirth = false
-_G.AutoSkill = false
-_G.Url = ""
-_G.Enemy = ""
-
 local DiscordLib = loadstring(game:HttpGet"https://raw.githubusercontent.com/dawid-scripts/UI-Libs/main/discord%20lib.txt")()
 
 local win = DiscordLib:Window("Amgus")
@@ -200,12 +194,11 @@ pcall(function()
 	end)
 end)
 
-game:GetService("ReplicatedStorage").Remotes.ItemSetup.OnClientEvent:Connect(function(v)
-	if game:GetService("Players").LocalPlayer.leaderstats.Level.Value == 0 then
+game:GetService("Players").LocalPlayer.leaderstats.Level.Changed:Connect(function(value)
+	if value == 0 then
 		spawn(function()
 			if _G.Url ~= "" then
 				local data = {
-					["content"] = v,
 					["embeds"] = {
 						{
 							["title"] = "Rebirth Successfully",
