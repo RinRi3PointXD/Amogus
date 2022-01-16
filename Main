@@ -15,7 +15,7 @@ end
 function SendWebhook()
 	if game:GetService("Players").LocalPlayer.leaderstats.Level.Value == 0 then
 		spawn(function()
-			if _G.Url ~= "" then
+			if _G.Url and _G.Url ~= "" then
 				local data = {
 					["embeds"] = {
 						{
