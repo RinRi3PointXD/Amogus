@@ -133,7 +133,7 @@ spawn(function()
 								game:GetService("Players").LocalPlayer.Character.ItemActivate:FireServer(unpack(args))
 							end
 
-							if game:GetService("Workspace"):FindFirstChild("CombatFolder") and ame.Players.LocalPlayer.Character.Humanoid.Health > 0 then
+							if game:GetService("Workspace"):FindFirstChild("CombatFolder") and game.Players.LocalPlayer.Character.Humanoid.Health > 0 then
 								if game:GetService("Workspace").CombatFolder:FindFirstChild(game.Players.LocalPlayer.Name) then
 									for i,orb in pairs(game:GetService("Workspace").CombatFolder:FindFirstChild(game.Players.LocalPlayer.Name):GetChildren()) do
 										if string.match(orb.Name, "Orb") then
