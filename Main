@@ -12,6 +12,33 @@ function God()
 	end
 end
 
+function SendWebhook()
+	if game:GetService("Players").LocalPlayer.leaderstats.Level.Value == 0 then
+		spawn(function()
+			if _G.Url ~= "" then
+				local data = {
+					["embeds"] = {
+						{
+							["title"] = "Rebirth Successfully",
+							["description"] = DateTime.now():FormatLocalTime("LT", "en-us"),
+							["type"] = "rich",
+							["color"] = tonumber(0x7269da),
+						}
+					}
+				}
+				local newdata = game:GetService("HttpService"):JSONEncode(data)
+
+				local headers = {
+					["content-type"] = "application/json"
+				}
+				request = http_request or request or HttpPost or syn.request
+				local abcdef = {Url = _G.Url, Body = newdata, Method = "POST", Headers = headers}
+				request(abcdef)
+			end
+		end)
+	end
+end
+
 local drop = btns:Dropdown("Select Enemies",{}, function(bool)
 	local Enemy	 = workspace["Enemies"]:FindFirstChild(bool)
 	if Enemy then
@@ -106,7 +133,7 @@ spawn(function()
 								game:GetService("Players").LocalPlayer.Character.ItemActivate:FireServer(unpack(args))
 							end
 
-							if game:GetService("Workspace"):FindFirstChild("CombatFolder") then
+							if game:GetService("Workspace"):FindFirstChild("CombatFolder") and ame.Players.LocalPlayer.Character.Humanoid.Health > 0 then
 								if game:GetService("Workspace").CombatFolder:FindFirstChild(game.Players.LocalPlayer.Name) then
 									for i,orb in pairs(game:GetService("Workspace").CombatFolder:FindFirstChild(game.Players.LocalPlayer.Name):GetChildren()) do
 										if string.match(orb.Name, "Orb") then
@@ -159,6 +186,8 @@ spawn(function()
 								until game:GetService("Players").LocalPlayer.leaderstats.Level.Value ~= 150
 
 								_G.Enemy = "Void Boss"
+								wait(0.15)
+								SendWebhook()
 							else
 								_G.Enemy = "Void Boss"
 							end
@@ -192,31 +221,4 @@ pcall(function()
 
 		game:GetService("ReplicatedStorage").Remotes.StatsChange:FireServer(unpack(args))
 	end)
-end)
-
-game:GetService("Players").LocalPlayer.leaderstats.Level.Changed:Connect(function(value)
-	if value == 0 then
-		spawn(function()
-			if _G.Url ~= "" then
-				local data = {
-					["embeds"] = {
-						{
-							["title"] = "Rebirth Successfully",
-							["description"] = DateTime.now():FormatLocalTime("LT", "en-us"),
-							["type"] = "rich",
-							["color"] = tonumber(0x7269da),
-						}
-					}
-				}
-				local newdata = game:GetService("HttpService"):JSONEncode(data)
-
-				local headers = {
-					["content-type"] = "application/json"
-				}
-				request = http_request or request or HttpPost or syn.request
-				local abcdef = {Url = _G.Url, Body = newdata, Method = "POST", Headers = headers}
-				request(abcdef)
-			end
-		end)
-	end
 end)
