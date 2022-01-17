@@ -11,6 +11,7 @@ function God()
 		end
 	end
 end
+God()
 
 function SendWebhook()
 	if game:GetService("Players").LocalPlayer.leaderstats.Level.Value == 0 then
@@ -61,19 +62,11 @@ end)
 btns:Toggle("Auto-Rebirth",false, function(bool)
 
 	_G.AutoRebirth = bool
-
-	if bool == true and _G.AutoFarm == false then
-		DiscordLib:Notification("Notification", "เปิด AutoFarm ด้วย", "Okay!")
-	end
 end)
 
 btns:Toggle("Auto-Skill",false, function(bool)
 
 	_G.AutoSkill = bool
-
-	if bool == true and _G.AutoFarm == false then
-		DiscordLib:Notification("Notification", "เปิด AutoFarm ด้วย", "Okay!")
-	end
 end)
 
 spawn(function()
@@ -86,7 +79,7 @@ spawn(function()
 							break
 						end
 
-						if _G.AutoSkill and game:GetService("Players").LocalPlayer.Character.ActiveItems:FindFirstChild("Rage Scroll") == nil  then
+						if _G.AutoSkill then
 							if game:GetService("Players").LocalPlayer.PlayerData.Inventory:FindFirstChild("Rage Scroll") == nil then
 								repeat
 									wait()
@@ -99,17 +92,20 @@ spawn(function()
 								wait(0.15)
 							end
 
-							repeat
-								wait()
-								game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Arsenals["Punky Sky"].Base.CFrame * CFrame.new(0,0,0)
-								local args = {
-									[1] = "Rage Scroll"
-								}
+							if not (game:GetService("Players").LocalPlayer.Character.ActiveItems:FindFirstChild("Rage Scroll")) then
+								repeat
+									wait()
+									game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Arsenals["Punky Sky"].Base.CFrame
+									local args = {
+										[1] = "Rage Scroll"
+									}
 
-								game:GetService("ReplicatedStorage").Remotes.ItemSetup:FireServer(unpack(args))
-							until game:GetService("Players").LocalPlayer.Character.ActiveItems:FindFirstChild("Rage Scroll")
+									game:GetService("ReplicatedStorage").Remotes.ItemSetup:FireServer(unpack(args))
+									
+								until game:GetService("Players").LocalPlayer.Character.ActiveItems:FindFirstChild("Rage Scroll")
 
-							wait(0.15)
+								wait(0.15)
+							end	
 						end
 
 						repeat
@@ -125,12 +121,22 @@ spawn(function()
 							wait()
 							game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = true
 
-							if _G.AutoSkill and game:GetService("Players").LocalPlayer.Character.ActiveItems:FindFirstChild("Rage Scroll") then
-								local args = {
-									[1] = game:GetService("Players").LocalPlayer.Character.ActiveItems:FindFirstChild("Rage Scroll")
-								}
+							if _G.AutoSkill then
+								if game:GetService("Players").LocalPlayer.Character.ActiveItems:FindFirstChild("Rage Scroll") then
+									local args = {
+										[1] = game:GetService("Players").LocalPlayer.Character.ActiveItems:FindFirstChild("Rage Scroll")
+									}
 
-								game:GetService("Players").LocalPlayer.Character.ItemActivate:FireServer(unpack(args))
+									game:GetService("Players").LocalPlayer.Character.ItemActivate:FireServer(unpack(args))
+								end
+
+								if game:GetService("Players").LocalPlayer.Character.ActiveItems:FindFirstChild("The Elements") then
+									local args = {
+										[1] = game:GetService("Players").LocalPlayer.Character.ActiveItems:FindFirstChild("The Elements")
+									}
+
+									game:GetService("Players").LocalPlayer.Character.ItemActivate:FireServer(unpack(args))
+								end
 							end
 
 							if game:GetService("Workspace"):FindFirstChild("CombatFolder") and game.Players.LocalPlayer.Character.Humanoid.Health > 0 then
@@ -138,7 +144,7 @@ spawn(function()
 									for i,orb in pairs(game:GetService("Workspace").CombatFolder:FindFirstChild(game.Players.LocalPlayer.Name):GetChildren()) do
 										if string.match(orb.Name, "Orb") then
 											sethiddenproperty(game.Players.LocalPlayer, "SimulationRadius", math.huge)
-											game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = orb:FindFirstChildWhichIsA("BasePart").CFrame
+											--game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = orb:FindFirstChildWhichIsA("BasePart").CFrame
 
 											if v:FindFirstChildWhichIsA("Model") then
 												game.ReplicatedStorage.Remotes.Damage:FireServer(v:FindFirstChildWhichIsA("Model"),orb)
